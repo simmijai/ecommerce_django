@@ -1,0 +1,302 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attractive NavBar</title>
+    <style>
+        /* Reset some basic styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            padding-top: 70px; /* To ensure content is not hidden behind navbar */
+        }
+
+        /* Navigation Bar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .navbar .logo h1 {
+            color: white;
+            font-size: 2rem;
+        }
+
+        .navbar .logo a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links li {
+            position: relative;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 10px 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-links li a:hover {
+            background-color: #ff6600;
+            border-radius: 5px;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .menu-toggle .bar {
+            width: 30px;
+            height: 4px;
+            background-color: white;
+            border-radius: 5px;
+        }
+
+        /* Responsive Styles */
+        @media screen and (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 80px;
+                left: 0;
+                background-color: #333;
+                padding: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-links li a {
+                padding: 15px;
+                width: 100%;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 40px 20px;
+            font-size: 14px;
+            margin-top: 50px;
+        }
+    
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+    
+        /* Footer Logo Styles */
+        .footer-logo h2 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+    
+        .footer-logo p {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+    
+        /* Footer Links Section */
+        .footer-links h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+    
+        .footer-links ul li {
+            margin-bottom: 10px;
+        }
+    
+        .footer-links ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+    
+        .footer-links ul li a:hover {
+            color: #007bff;
+        }
+    
+        /* Footer Contact Section */
+        .footer-contact h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    
+        .footer-contact p {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+    
+        /* Footer Social Media Section */
+        .footer-social h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    
+        .footer-social ul {
+            list-style: none;
+            display: flex;
+            padding: 0;
+        }
+    
+        .footer-social ul li {
+            margin-right: 20px;
+        }
+    
+        .footer-social ul li a img {
+            width: 30px;
+            height: 30px;
+            transition: transform 0.3s ease;
+        }
+    
+        .footer-social ul li a img:hover {
+            transform: scale(1.1);
+        }
+    
+        /* Footer Bottom Section */
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #555;
+            margin-top: 20px;
+        }
+    
+        .footer-bottom p {
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1><a href="/">E-Commerce</a></h1> <!-- Link to the homepage -->
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="{% url 'admin_portal' %}">Admin</a></li>  
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+
+            </ul>
+            <!-- Hamburger icon for mobile -->
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Add some content below to test scrolling or more -->
+    <div style="padding: 50px; text-align: center;">
+        <h2>Welcome to Our E-Commerce Store</h2>
+        <p>Start shopping today and enjoy amazing discounts!</p>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenu = document.getElementById("mobile-menu");
+        const navLinks = document.querySelector(".nav-links");
+
+        mobileMenu.addEventListener("click", () => {
+            navLinks.classList.toggle("active");
+        });
+    </script>
+<footer>
+    <div class="footer-container">
+        <!-- Footer Logo Section -->
+        <div class="footer-logo">
+            <h2>ShopEasy</h2>
+            <p>Your one-stop online store for everything!</p>
+        </div>
+
+        <!-- Footer Links Section -->
+        <div class="footer-links">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Shop</a></li>
+                <li><a href="#">Products</a></li>
+                <li><a href="#">Orders</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+
+        <!-- Footer Contact Section -->
+        <div class="footer-contact">
+            <h3>Contact Us</h3>
+            <p>Email: support@shopeasy.com</p>
+            <p>Phone: +1 234 567 890</p>
+        </div>
+
+        <!-- Footer Social Media Section -->
+        <div class="footer-social">
+            <h3>Follow Us</h3>
+            <ul>
+                <li><a href="#"><img src="{% static 'images/facebook-icon.png' %}" alt="Facebook"></a></li>
+                <li><a href="#"><img src="{% static 'images/twitter-icon.png' %}" alt="Twitter"></a></li>
+                <li><a href="#"><img src="{% static 'images/instagram-icon.png' %}" alt="Instagram"></a></li>
+                <li><a href="#"><img src="{% static 'images/linkedin-icon.png' %}" alt="LinkedIn"></a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- Footer Bottom Section -->
+    <div class="footer-bottom">
+        <p>&copy; 2024 ShopEasy. All Rights Reserved.</p>
+    </div>
+</footer>
+</body>
+</html> 
