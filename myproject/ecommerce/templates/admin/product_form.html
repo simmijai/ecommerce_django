@@ -1,0 +1,310 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add or Edit Product</title>
+    <style>
+        /* General Styles */
+        body {
+            background-color: #f4f7fc;
+            color: #333;
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        /* Form Styles */
+        form {
+            width: 60%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: block;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        textarea,
+        input[type="number"],
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        input[type="file"] {
+            padding: 5px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            form {
+                width: 90%;
+            }
+
+            label {
+                font-size: 16px;
+            }
+
+            button {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>{% if product %} Edit Product {% else %} Add New Product {% endif %}</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Product Name -->
+        <label for="name">Product Name:</label>
+        {{ form.name }}
+
+        <!-- Product Description -->
+        <label for="description">Description:</label>
+        {{ form.description }}
+
+        <!-- Product Price -->
+        <label for="price">Price:</label>
+        {{ form.price }}
+
+        <!-- Product Category -->
+        <label for="category">Category:</label>
+        {{ form.category }}
+
+        <label for="subcategory">Sub Category:</label>
+        {{ form.subcategory }}
+
+        <!-- Product Image -->
+        <label for="image">Image:</label>
+        {{ form.image }}
+        
+        <button type="submit">Submit Product</button>
+    </form>
+</body>
+</html> {% endcomment %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add or Edit Product</title>
+    <style>
+        /* General Styles */
+        body {
+            background-color: #f4f7fc;
+            color: #333;
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        /* Form Styles */
+        form {
+            width: 60%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: block;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        textarea,
+        input[type="number"],
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        input[type="file"] {
+            padding: 5px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            form {
+                width: 90%;
+            }
+
+            label {
+                font-size: 16px;
+            }
+
+            button {
+                font-size: 16px;
+            }
+        }
+    </style>
+
+    <script>
+        // JavaScript to dynamically update Subcategory based on Category
+        document.addEventListener('DOMContentLoaded', function () {
+            const categoryField = document.getElementById('id_category');
+            const subcategoryField = document.getElementById('id_subcategory');
+
+            // Function to load subcategories based on category selection
+            function loadSubcategories(categoryId) {
+                fetch(`/get-subcategories/${categoryId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Clear existing options
+                        subcategoryField.innerHTML = '';
+                        
+                        // Add default "Select Subcategory" option
+                        const defaultOption = document.createElement('option');
+                        defaultOption.value = '';
+                        defaultOption.textContent = 'Select Subcategory';
+                        subcategoryField.appendChild(defaultOption);
+                        
+                        // Add the new subcategory options
+                        data.subcategories.forEach(subcategory => {
+                            const option = document.createElement('option');
+                            option.value = subcategory.id;
+                            option.textContent = subcategory.name;
+                            subcategoryField.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching subcategories:', error));
+            }
+
+            // Add event listener to category field
+            categoryField.addEventListener('change', function () {
+                const categoryId = categoryField.value;
+                if (categoryId) {
+                    loadSubcategories(categoryId);
+                } else {
+                    // If no category is selected, reset subcategory field
+                    subcategoryField.innerHTML = '';
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Select Subcategory';
+                    subcategoryField.appendChild(defaultOption);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>{% if product %} Edit Product {% else %} Add New Product {% endif %}</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Product Name -->
+        <label for="name">Product Name:</label>
+        {{ form.name }}
+
+        <!-- Product Description -->
+        <label for="description">Description:</label>
+        {{ form.description }}
+
+        <!-- Product Price -->
+        <label for="price">Price:</label>
+        {{ form.price }}
+
+        <!-- Product Category -->
+        <label for="category">Category:</label>
+        {{ form.category }}
+        
+        <!-- Product Subcategory -->
+        <label for="subcategory">Sub Category:</label>
+        {{ form.subcategory }}
+
+        <!-- Product Image -->
+        <label for="image">Image:</label>
+        {{ form.image }}
+        
+        <button type="submit">Submit Product</button>
+    </form>
+</body>
+</html>

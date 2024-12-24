@@ -1,0 +1,392 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <style>
+    /* Global Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f7fc;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Main content area */
+    .main-content {
+      padding: 20px;
+      flex: 1;
+    }
+
+    /* Button Styling */
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Product List Styling */
+    .product-list {
+      margin-top: 20px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-list h2 {
+      text-align: center;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
+
+    .product-list table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .product-list th, .product-list td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    .product-list th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .product-list tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .product-list img {
+      max-width: 80px;
+      border-radius: 5px;
+    }
+
+    /* Bottom-to-top button */
+    #scrollToTopBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      display: none;
+    }
+
+    #scrollToTopBtn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<ul>
+         <li><a href="{% url 'admin_portal' %}">Home</a></li>
+
+</ul>
+  <!-- Main content -->
+  <div class="main-content">
+    <!-- Add New Product Button -->
+    <a href="{% url 'add_product' %}">
+      <button>Add New Product</button>
+    </a>
+
+    <!-- Product List Content -->
+    <div class="product-list">
+      <h2>Product List</h2>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Category</th>
+          <th>SUBCategory</th>
+          <th>Image</th>
+          <th>Actions</th>
+        </tr>
+        {% for product in products %}
+        <tr>
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>${{ product.price }}</td>
+          <td>{{ product.category.name }}</td>
+          <td>{{ product.subcategory.name }}</td>
+
+          <td class="action-buttons">
+            <a href="{% url 'edit_product' product.id %}">Edit</a> | 
+            <form action="{% url 'delete_product' product.id %}" method="post" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="delete-button">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+  <button id="scrollToTopBtn" onclick="scrollToTop()">↑</button>
+
+  <script>
+    window.onscroll = function() {
+      if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        document.getElementById("scrollToTopBtn").style.display = "block";
+      } else {
+        document.getElementById("scrollToTopBtn").style.display = "none";
+      }
+    };
+
+    // Scroll to the top of the page when the button is clicked
+    function scrollToTop() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+  </script>
+
+</body>
+</html> {% endcomment %}
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    /* Global Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f7fc;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      display: flex;
+      justify-content: space-between; /* Align logo and links to left, and button to right */
+      align-items: center;
+      background-color: #007bff;
+      padding: 10px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar .logo {
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .navbar .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+    }
+
+    .navbar .nav-links li a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      padding: 8px 15px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    .navbar .nav-links li a:hover {
+      background-color: #0056b3;
+    }
+
+    /* Button aligned to the right inside the navbar */
+    .navbar .navbar-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar .navbar-actions button {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .navbar .navbar-actions button:hover {
+      background-color: #218838;
+    }
+
+    /* Main content area */
+    .main-content {
+      padding: 20px;
+      flex: 1;
+      padding-top: 60px; /* To avoid content being hidden under the navbar */
+    }
+
+    /* Product List Styling */
+    .product-list {
+      margin-top: 20px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-list h2 {
+      text-align: center;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
+
+    .product-list table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .product-list th, .product-list td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    .product-list th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .product-list tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    /* Scroll to Top Button */
+    #scrollToTopBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      display: none;
+    }
+
+    #scrollToTopBtn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <!-- Logo -->
+    <div class="logo">Admin Panel</div>
+
+    <!-- Navbar Links -->
+    <ul class="nav-links">
+      <li><a href="{% url 'admin_portal' %}">Home</a></li>
+      <!-- Add other navbar links here -->
+    </ul>
+
+    <!-- Right-aligned Button -->
+    <div class="navbar-actions">
+      <a href="{% url 'add_product' %}">
+        <button>Add New Product</button>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <div class="main-content">
+    <!-- Product List Content -->
+    <div class="product-list">
+      <h2>Product List</h2>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Category</th>
+          <th>SubCategory</th>
+          <th>Actions</th>
+        </tr>
+        {% for product in products %}
+        <tr>
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>${{ product.price }}</td>
+          <td>{{ product.category.name }}</td>
+          <td>{{ product.subcategory.name }}</td>
+          <td class="action-buttons">
+            <a href="{% url 'edit_product' product.id %}">Edit</a> | 
+            <form action="{% url 'delete_product' product.id %}" method="post" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="delete-button">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+  <!-- Scroll to Top Button -->
+  <button id="scrollToTopBtn" onclick="scrollToTop()">↑</button>
+
+  <!-- JavaScript -->
+  <script>
+    // Show or hide the scroll-to-top button based on scroll position
+    window.onscroll = function() {
+      if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        document.getElementById("scrollToTopBtn").style.display = "block";
+      } else {
+        document.getElementById("scrollToTopBtn").style.display = "none";
+      }
+    };
+
+    // Scroll to the top of the page when the button is clicked
+    function scrollToTop() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+  </script>
+
+</body>
+</html>

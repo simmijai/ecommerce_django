@@ -1,0 +1,590 @@
+{% comment %} {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reset & Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* Header */
+        header {
+            background-color: #232F3E;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        header nav a {
+            color: white;
+            font-size: 18px;
+            margin: 0 20px;
+            transition: color 0.3s ease;
+        }
+
+        header nav a:hover {
+            color: #FF9900;
+        }
+
+        /* Cart Section */
+        .cart-section {
+            max-width: 1200px;
+            width: 95%;
+            margin: 50px auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+            padding: 40px 20px;
+        }
+
+        .cart-section h2 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #232F3E;
+        }
+
+        /* Cart Items */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .cart-item:hover {
+            transform: translateY(-5px);
+            background-color: #f9f9f9;
+        }
+
+        .cart-item img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-item-info {
+            flex: 1;
+            padding-left: 20px;
+        }
+
+        .cart-item h3 {
+            font-size: 20px;
+            color: #232F3E;
+            font-weight: 600;
+        }
+
+        .cart-item p {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .cart-item .price {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FF9900;
+        }
+
+        /* Cart Actions */
+        .buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .quantity-button, .remove-button {
+            background-color: #FF9900;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .quantity-button:hover, .remove-button:hover {
+            background-color: #e6893f;
+        }
+
+        .quantity-button i, .remove-button i {
+            margin-right: 5px;
+        }
+
+        /* Cart Total Section */
+        .cart-total {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #232F3E;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .cart-total .total-value {
+            font-size: 24px;
+            color: #FF9900;
+        }
+
+        /* Checkout Button */
+        .checkout-btn {
+            display: block;
+            width: 250px;
+            margin: 40px auto;
+            padding: 15px;
+            background-color: #FF9900;
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background-color: #e6893f;
+        }
+
+        /* Empty Cart Message */
+        .empty-cart-message {
+            text-align: center;
+            font-size: 20px;
+            color: #777;
+            padding: 50px 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cart-item-info {
+                padding-left: 0;
+                margin-top: 10px;
+            }
+
+            .cart-item img {
+                width: 100px;
+                height: 100px;
+            }
+
+            .cart-total {
+                font-size: 18px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .checkout-btn {
+                width: 220px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/cart">Cart</a>
+        </nav>
+    </header>
+
+    <!-- Cart Section -->
+    <div class="cart-section">
+        <h2>Your Cart</h2>
+
+        {% if cart_items %}
+            {% for item in cart_items %}
+                <div class="cart-item">
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+
+                    <div class="cart-item-info">
+                        <h3>{{ item.product.name }}</h3>
+                        <p>{{ item.product.description|truncatewords:10 }}</p>
+                        <p class="quantity">Quantity: {{ item.quantity }}</p>
+                    </div>
+
+                    <div class="cart-item-price">
+                        <p class="price">${{ item.total_price }}</p>
+                    </div>
+
+                    <div class="buttons">
+                        <form method="POST" action="{% url 'update_cart' item.id %}">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99" style="width: 60px; padding: 5px; font-size: 16px; margin-right: 10px;">
+                            <button type="submit" class="quantity-button"><i class="fas fa-sync"></i>Update Quantity</button>
+                        </form>
+                        <form method="POST" action="{% url 'remove_from_cart' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="remove-button"><i class="fas fa-trash"></i>Remove</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="cart-total">
+                <span>Total Cart Value:</span>
+                <span class="total-value">${{ total_price }}</span>
+            </div>
+
+            <a href="/add-address" class="checkout-btn">Proceed to Checkout</a>
+        {% else %}
+            <p class="empty-cart-message">Your cart is empty. Start shopping now!</p>
+        {% endif %}
+    </div>
+
+</body>
+</html> {% endcomment %}
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reset & Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* Header */
+        header {
+            background-color: #232F3E;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        header nav a {
+            color: white;
+            font-size: 18px;
+            margin: 0 20px;
+            transition: color 0.3s ease;
+        }
+
+        header nav a:hover {
+            color: #FF9900;
+        }
+
+        /* Cart Section */
+        .cart-section {
+            max-width: 1200px;
+            width: 95%;
+            margin: 50px auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+            padding: 40px 20px;
+        }
+
+        .cart-section h2 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #232F3E;
+        }
+
+        /* Cart Items */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .cart-item:hover {
+            transform: translateY(-5px);
+            background-color: #f9f9f9;
+        }
+
+        .cart-item img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-item-info {
+            flex: 1;
+            padding-left: 20px;
+        }
+
+        .cart-item h3 {
+            font-size: 20px;
+            color: #232F3E;
+            font-weight: 600;
+        }
+
+        .cart-item p {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .cart-item .price {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FF9900;
+        }
+
+        /* Cart Actions */
+        .buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .quantity-button, .remove-button {
+            background-color: #FF9900;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .quantity-button:hover, .remove-button:hover {
+            background-color: #e6893f;
+        }
+
+        .quantity-button i, .remove-button i {
+            margin-right: 5px;
+        }
+
+        /* Cart Total Section */
+        .cart-total {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #232F3E;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .cart-total .total-value {
+            font-size: 24px;
+            color: #FF9900;
+        }
+
+        /* Checkout Button */
+        .checkout-btn {
+            display: block;
+            width: 250px;
+            margin: 40px auto;
+            padding: 15px;
+            background-color: #FF9900;
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background-color: #e6893f;
+        }
+
+        /* Empty Cart Message */
+        .empty-cart-message {
+            text-align: center;
+            font-size: 20px;
+            color: #777;
+            padding: 50px 0;
+        }
+
+        /* Scroll Up Button */
+        .scroll-up-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #FF9900;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            display: none; /* Initially hidden */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        .scroll-up-btn:hover {
+            background-color: #e6893f;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cart-item-info {
+                padding-left: 0;
+                margin-top: 10px;
+            }
+
+            .cart-item img {
+                width: 100px;
+                height: 100px;
+            }
+
+            .cart-total {
+                font-size: 18px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .checkout-btn {
+                width: 220px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/cart">Cart</a>
+        </nav>
+    </header>
+
+    <!-- Cart Section -->
+    <div class="cart-section">
+        <h2>Your Cart</h2>
+
+        {% if cart_items %}
+            {% for item in cart_items %}
+                <div class="cart-item">
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+
+                    <div class="cart-item-info">
+                        <h3>{{ item.product.name }}</h3>
+                        <p>{{ item.product.description|truncatewords:10 }}</p>
+                        <p class="quantity">Quantity: {{ item.quantity }}</p>
+                    </div>
+
+                    <div class="cart-item-price">
+                        <p class="price">${{ item.total_price }}</p>
+                    </div>
+
+                    <div class="buttons">
+                        <form method="POST" action="{% url 'update_cart' item.id %}">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99" style="width: 60px; padding: 5px; font-size: 16px; margin-right: 10px;">
+                            <button type="submit" class="quantity-button"><i class="fas fa-sync"></i>Update Quantity</button>
+                        </form>
+                        <form method="POST" action="{% url 'remove_from_cart' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="remove-button"><i class="fas fa-trash"></i>Remove</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="cart-total">
+                <span>Total Cart Value:</span>
+                <span class="total-value">${{ total_price }}</span>
+            </div>
+
+            <a href="/add-address" class="checkout-btn">Proceed to Checkout</a>
+        {% else %}
+            <p class="empty-cart-message">Your cart is empty. Start shopping now!</p>
+        {% endif %}
+    </div>
+
+    <!-- Scroll Up Button -->
+    <button class="scroll-up-btn" id="scrollUpBtn">
+        ↑
+    </button>
+
+    <script>
+        // Get the scroll up button
+        const scrollUpBtn = document.getElementById('scrollUpBtn');
+
+        // Show the button when user scrolls down 100px from the top
+        window.onscroll = function() {
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                scrollUpBtn.style.display = 'block';
+            } else {
+                scrollUpBtn.style.display = 'none';
+            }
+        };
+
+        // Scroll to the top when the button is clicked
+        scrollUpBtn.onclick = function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+    </script>
+
+</body>
+</html>

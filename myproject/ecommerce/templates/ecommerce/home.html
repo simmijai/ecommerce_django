@@ -1,218 +1,207 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attractive NavBar</title>
+    <title>Attractive NavBar with Products</title>
+
+    <!-- Include SweetAlert2 CSS and JS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        /* Reset some basic styles */
+        /* Reset some default styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* Body and overall page layout */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
-            padding-top: 70px; /* To ensure content is not hidden behind navbar */
+            color: #333;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
         }
 
-        /* Navigation Bar Styles */
+        header {
+            background-color: #333;
+            padding: 10px 0;
+        }
+
+        /* Navigation Bar */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #333;
-            padding: 1rem 2rem;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
+            padding: 0 20px;
         }
 
-        .navbar .logo h1 {
+        .logo h1 a {
             color: white;
-            font-size: 2rem;
-        }
-
-        .navbar .logo a {
             text-decoration: none;
-            color: white;
+            font-size: 30px;
         }
 
         .nav-links {
-            list-style: none;
             display: flex;
-            gap: 20px;
+            list-style: none;
         }
 
         .nav-links li {
+            margin-left: 20px;
             position: relative;
         }
 
-        .nav-links li a {
-            text-decoration: none;
+        .nav-links a {
             color: white;
-            font-size: 1rem;
-            font-weight: bold;
-            padding: 10px 15px;
-            transition: background-color 0.3s ease;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.3s ease;
         }
 
-        .nav-links li a:hover {
-            background-color: #ff6600;
-            border-radius: 5px;
+        .nav-links a:hover {
+            color: #ff6f61;
         }
 
-        /* Mobile Menu Toggle */
-        .menu-toggle {
+        /* Dropdown Menu Styles */
+        .dropdown-menu {
             display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
+            position: absolute;
+            background-color: #333;
+            padding: 10px 0;
+            list-style: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            top: 100%;
+            left: 0;
+            width: 250px;
         }
 
-        .menu-toggle .bar {
-            width: 30px;
-            height: 4px;
+        .dropdown-menu a {
+            color: white;
+            padding: 10px 20px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #ff6f61;
+        }
+
+        .nav-links li:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* Products Section */
+        .products-section {
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .products-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .product {
             background-color: white;
-            border-radius: 5px;
+            width: calc(33% - 20px);
+            margin-bottom: 30px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* Responsive Styles */
-        @media screen and (max-width: 768px) {
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                position: absolute;
-                top: 80px;
-                left: 0;
-                background-color: #333;
-                padding: 1rem;
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .nav-links li {
-                width: 100%;
-                text-align: center;
-            }
-
-            .nav-links li a {
-                padding: 15px;
-                width: 100%;
-            }
-
-            .menu-toggle {
-                display: flex;
-            }
+        .product h4 {
+            font-size: 20px;
+            margin-bottom: 10px;
         }
 
+        .product p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .product span {
+            font-size: 18px;
+            color: #ff6f61;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        /* Add to Cart Button Styles */
+button[type="submit"] {
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
+    border: none; /* Remove default border */
+    padding: 12px 24px; /* Add padding to make it larger */
+    font-size: 16px; /* Set font size */
+    font-weight: bold; /* Make the text bold */
+    border-radius: 30px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+}
+
+/* Hover state */
+button[type="submit"]:hover {
+    background-color: #218838; /* Darker green on hover */
+    transform: scale(1.05); /* Slightly enlarge button on hover */
+}
+
+/* Focus and active state */
+button[type="submit"]:focus, button[type="submit"]:active {
+    background-color: #218838; /* Keep the dark green when active */
+    transform: scale(1.05); /* Keep the enlarged state when clicked */
+    outline: none; /* Remove the default outline on focus */
+}
+
+/* Disabled Button */
+button[type="submit"]:disabled {
+    background-color: #ddd; /* Light grey color */
+    cursor: not-allowed; /* Indicate it's disabled */
+    transform: none; /* Remove scaling effect when disabled */
+    box-shadow: none; /* Remove shadow when disabled */
+}
+
+
+        /* Footer */
         footer {
             background-color: #333;
             color: white;
-            padding: 40px 20px;
-            font-size: 14px;
-            margin-top: 50px;
-        }
-    
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-    
-        /* Footer Logo Styles */
-        .footer-logo h2 {
-            font-size: 24px;
-            font-weight: bold;
-        }
-    
-        .footer-logo p {
-            font-size: 16px;
-            margin-top: 10px;
-        }
-    
-        /* Footer Links Section */
-        .footer-links h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-    
-        .footer-links ul {
-            list-style: none;
-            padding: 0;
-        }
-    
-        .footer-links ul li {
-            margin-bottom: 10px;
-        }
-    
-        .footer-links ul li a {
-            text-decoration: none;
-            color: white;
-            font-size: 14px;
-            transition: color 0.3s ease;
-        }
-    
-        .footer-links ul li a:hover {
-            color: #007bff;
-        }
-    
-        /* Footer Contact Section */
-        .footer-contact h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-    
-        .footer-contact p {
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-    
-        /* Footer Social Media Section */
-        .footer-social h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-    
-        .footer-social ul {
-            list-style: none;
-            display: flex;
-            padding: 0;
-        }
-    
-        .footer-social ul li {
-            margin-right: 20px;
-        }
-    
-        .footer-social ul li a img {
-            width: 30px;
-            height: 30px;
-            transition: transform 0.3s ease;
-        }
-    
-        .footer-social ul li a img:hover {
-            transform: scale(1.1);
-        }
-    
-        /* Footer Bottom Section */
-        .footer-bottom {
             text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #555;
-            margin-top: 20px;
-        }
-    
-        .footer-bottom p {
-            font-size: 14px;
+            padding: 20px;
+            margin-top: 40px;
         }
 
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .products-list {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .product {
+                width: 80%;
+                margin: 10px 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -221,82 +210,75 @@
     <header>
         <nav class="navbar">
             <div class="logo">
-                <h1><a href="/">E-Commerce</a></h1> <!-- Link to the homepage -->
+                <h1><a href="/">E-Commerce</a></h1>
             </div>
             <ul class="nav-links">
                 <li><a href="/">Home</a></li>
-                <li><a href="{% url 'admin_portal' %}">Admin</a></li>  
                 <li><a href="/cart">Cart</a></li>
-                <li><a href="/login">Login</a></li>
-                <li><a href="/register">Register</a></li>
+                <li>
+                    <a href="#">Categories</a>
+                    <ul class="dropdown-menu">
+                        {% for category in categories %}
+                            <li>
+                                <a href="?category={{ category.id }}">{{ category.name }}</a>
+                                {% if category.subcategories.all %}
+                                    <ul class="dropdown-menu">
+                                        {% for subcategory in category.subcategories.all %}
+                                            <li><a href="?subcategory={{ subcategory.id }}">{{ subcategory.name }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
 
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'user_profile' %}">Profile</a></li>
+                    <li>
+                        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" style="background:none; border:none; color:white; font-size:18px;">Logout</button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                {% endif %}
             </ul>
-            <!-- Hamburger icon for mobile -->
-            <div class="menu-toggle" id="mobile-menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
         </nav>
     </header>
 
-    <!-- Add some content below to test scrolling or more -->
-    <div style="padding: 50px; text-align: center;">
-        <h2>Welcome to Our E-Commerce Store</h2>
-        <p>Start shopping today and enjoy amazing discounts!</p>
+    <!-- Products Section -->
+    <div class="products-section">
+        <h2>Products</h2>
+        {% if products %}
+            <div class="products-list">
+                {% for product in products %}
+                    <div class="product">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                        {% else %}
+                            <p>No image available.</p>
+                        {% endif %}
+                        <h4>{{ product.name }}</h4>
+                        <p>{{ product.description }}</p>
+                        <span>${{ product.price }}</span>
+                        <form action="{% url 'add_to_cart' product.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit">Add to Cart</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No products available.</p>
+        {% endif %}
     </div>
 
-    <script>
-        // Mobile menu toggle
-        const mobileMenu = document.getElementById("mobile-menu");
-        const navLinks = document.querySelector(".nav-links");
+    <footer>
+        <p>&copy; 2024 E-Commerce. All rights reserved.</p>
+    </footer>
 
-        mobileMenu.addEventListener("click", () => {
-            navLinks.classList.toggle("active");
-        });
-    </script>
-<footer>
-    <div class="footer-container">
-        <!-- Footer Logo Section -->
-        <div class="footer-logo">
-            <h2>ShopEasy</h2>
-            <p>Your one-stop online store for everything!</p>
-        </div>
-
-        <!-- Footer Links Section -->
-        <div class="footer-links">
-            <h3>Quick Links</h3>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Shop</a></li>
-                <li><a href="#">Products</a></li>
-                <li><a href="#">Orders</a></li>
-                <li><a href="#">Contact Us</a></li>
-            </ul>
-        </div>
-
-        <!-- Footer Contact Section -->
-        <div class="footer-contact">
-            <h3>Contact Us</h3>
-            <p>Email: support@shopeasy.com</p>
-            <p>Phone: +1 234 567 890</p>
-        </div>
-
-        <!-- Footer Social Media Section -->
-        <div class="footer-social">
-            <h3>Follow Us</h3>
-            <ul>
-                <li><a href="#"><img src="{% static 'images/facebook-icon.png' %}" alt="Facebook"></a></li>
-                <li><a href="#"><img src="{% static 'images/twitter-icon.png' %}" alt="Twitter"></a></li>
-                <li><a href="#"><img src="{% static 'images/instagram-icon.png' %}" alt="Instagram"></a></li>
-                <li><a href="#"><img src="{% static 'images/linkedin-icon.png' %}" alt="LinkedIn"></a></li>
-            </ul>
-        </div>
-    </div>
-    <!-- Footer Bottom Section -->
-    <div class="footer-bottom">
-        <p>&copy; 2024 ShopEasy. All Rights Reserved.</p>
-    </div>
-</footer>
 </body>
-</html> 
+</html>

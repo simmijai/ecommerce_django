@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash on Delivery Confirmation</title>
+
+    <!-- Linking Google Fonts for attractive text -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .message-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .message-container h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .message-container p {
+            color: #777;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .message-container .highlight {
+            font-weight: 600;
+            color: #ff6f61;
+        }
+
+        .confirm-btn {
+            background-color: #ff6f61;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .confirm-btn:hover {
+            background-color: #ff3b2f;
+        }
+
+        .confirm-btn:focus {
+            outline: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .footer a {
+            text-decoration: none;
+            color: #ff6f61;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .message-container {
+                padding: 20px;
+            }
+
+            .message-container h1 {
+                font-size: 28px;
+            }
+
+            .message-container p {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="message-container">
+        <h1>Cash on Delivery</h1>
+        <p>Your order will be shipped soon, and you can pay in cash when it arrives at your doorstep. Please ensure you're available to receive the delivery.</p>
+        <p><span class="highlight">Thank you for choosing Cash on Delivery!</span></p>
+
+        <button class="confirm-btn" onclick="window.location.href='/order-summary'">Proceed to Order Summary</button>
+    </div>
+
+    <div class="footer">
+        <p>Have any questions? <a href="/contact-us">Contact us</a></p>
+    </div>
+
+</body>
+</html>

@@ -1,6 +1,15 @@
 from django import forms
 from django.contrib.auth.models import User
+from .models import Category,Product,UserProfile,Address
 
+
+from .models import SubCategory, Category
+
+class SubCategoryForm(forms.ModelForm):
+    class Meta:
+        model = SubCategory
+        fields = ['name', 'category']
+        
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     confirmpassword = forms.CharField(widget=forms.PasswordInput)
@@ -24,3 +33,31 @@ class RegistrationForm(forms.ModelForm):
         if commit:
             user.save()  # Save the User object to the database
         return user
+           
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['phone_number', 'profile_picture']
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name', 'description']
+        
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'description', 'price', 'category','subcategory','image']
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), empty_label="Select Category")
+
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = [ 'city', 'state', 'zip_code', 'country']
+        
+        
+
+
+

@@ -146,28 +146,33 @@
         <div class="shape"></div>
     </div>
 
-    <form method="post">
-        <h3>Login Here</h3>
-        {% csrf_token %}
+ <!-- ecommerce/templates/ecommerce/login.html -->
 
-        <!-- Display error messages -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+<form method="post">
+  <h3>Login Here</h3>
+  {% csrf_token %}
 
-        <label for="username">Username</label>
-        <input type="text" placeholder="Enter Username" id="username" name="username" required>
+  <!-- Display error messages -->
+  {% if messages %}
+      {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+              {{ message }}
+          </div>
+      {% endfor %}
+  {% endif %}
 
-        <label for="password">Password</label>
-        <input type="password" placeholder="Password" id="password" name="password" required>
+  <label for="phone_number">Phone Number</label>
+  <input type="tel" id="phone_number" name="phone_number" placeholder="Enter your phone number" required>
 
-        <button type="submit">Log In</button>
+  <label for="password">Password</label>
+  <input type="password" placeholder="Password" id="password" name="password" required>
 
-        <p>Don't have an account? <a href="{% url 'register' %}">Create one</a></p>
-    </form>
+  <button type="submit">Log In</button>
+
+  <p>Don't have an account? <a href="{% url 'register' %}">Create one</a></p>
+</form>
+
+
+
 </body>
 </html>

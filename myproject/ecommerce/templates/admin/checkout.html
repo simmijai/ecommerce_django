@@ -1,0 +1,61 @@
+{% comment %} {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+</head>
+<body>
+
+<h1>Checkout</h1>
+
+<!-- Cart Items -->
+<h2>Your Cart</h2>
+{% for item in cart_items %}
+    <p>{{ item.product.name }} - ${{ item.product.price }} x {{ item.quantity }} = ${{ item.product.price * item.quantity }}</p>
+{% endfor %}
+<p>Total Price: ${{ total_price }}</p>
+
+<!-- Address Selection or Creation -->
+<h2>Shipping Address</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    
+    <!-- Option to select an existing address or enter a new one -->
+    <label>Select Existing Address or Enter a New One</label><br>
+    
+    <input type="radio" id="existing_address" name="new_address" value="False" {% if not form.new_address.value %}checked{% endif %}>
+    <label for="existing_address">Use Existing Address</label><br>
+    
+    <input type="radio" id="new_address" name="new_address" value="True" {% if form.new_address.value %}checked{% endif %}>
+    <label for="new_address">Use New Address</label><br>
+    
+    {% if form.new_address.value %}
+        <label for="address_line">Address Line:</label>
+        <input type="text" id="address_line" name="address_line" value="{{ form.address_line.value }}"><br>
+        
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" value="{{ form.city.value }}"><br>
+        
+        <label for="state">State:</label>
+        <input type="text" id="state" name="state" value="{{ form.state.value }}"><br>
+        
+        <label for="zip_code">Zip Code:</label>
+        <input type="text" id="zip_code" name="zip_code" value="{{ form.zip_code.value }}"><br>
+    {% else %}
+        <label for="address">Select Address:</label>
+        <select name="address">
+            <option value="">--Select Address--</option>
+            {% for address in request.user.address_set.all %}
+                <option value="{{ address.id }}" {% if address.id == form.address.value.id %}selected{% endif %}>{{ address.address_line }}, {{ address.city }}</option>
+            {% endfor %}
+        </select><br>
+    {% endif %}
+    
+    <button type="submit">Proceed to Order</button>
+</form>
+
+</body>
+</html> {% endcomment %}

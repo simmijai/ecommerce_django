@@ -1,0 +1,158 @@
+{% comment %} 
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+</head>
+<body>
+
+<h2>Order Confirmation</h2>
+<p>Thank you for your order! Your order number is {{ order.id }}.</p>
+<p>Shipping Address: {{ order.shipping_address }}</p>
+
+<h3>Order Details:</h3>
+<ul>
+    {% for item in order.items.all %}
+        <li>{{ item.product.name }} - {{ item.quantity }} x ${{ item.price }} = ${{ item.quantity * item.price }}</li>
+    {% endfor %}
+</ul>
+
+<p>Total Price: ${{ order.total_price }}</p>
+
+</body>
+</html> {% endcomment %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+
+    <!-- Add internal CSS to style the page -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 900px;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #007bff;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .order-details {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .order-details ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .order-details li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .order-details li:last-child {
+            border-bottom: none;
+        }
+
+        .order-details li span {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .total-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .shipping-address {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="container">
+        <h2>Order Confirmation</h2>
+        <p>Thank you for your order! Your order number is <span>{{ order.id }}</span>.</p>
+
+        <div class="shipping-address">
+            <h3>Shipping Address</h3>
+            <p>{{ order.shipping_address }}</p>
+        </div>
+
+        <div class="order-details">
+            <h3>Order Details:</h3>
+            <ul>
+                {% for item in order_items %}
+                    <li>
+                        <span>{{ item.product.name }}</span> - {{ item.quantity }} x ${{ item.price }} = ${{ item.total_price }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <p class="total-price">Total Order Price: ${{ order_total }}</p>
+
+        <a href="#" class="button">Continue Shopping</a>
+    </div>
+
+</body>
+</html>

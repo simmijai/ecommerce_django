@@ -1,0 +1,634 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            padding: 30px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-card h2 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .mt-4 {
+            margin-top: 40px;
+        }
+
+        .form-check {
+            margin-bottom: 20px;
+        }
+
+        .form-check-input {
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .form-check-input:checked {
+            transform: scale(1.2);
+            border-color: #007bff;
+        }
+
+        .form-check-label {
+            font-size: 16px;
+            color: #555;
+            transition: color 0.2s ease;
+        }
+
+        .form-check-label:hover {
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .modal-header .close {
+            color: white;
+            font-size: 1.5rem;
+            opacity: 1;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            padding: 15px;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 15px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .checkout-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            font-size: 18px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background-color: #218838;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .profile-card h2 {
+                font-size: 24px;
+            }
+
+            .form-control {
+                font-size: 14px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .checkout-btn {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="profile-card">
+            <h2>User Profile</h2>
+            <!-- Button to trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addressModal">
+                Add Address
+            </button>
+        </div>
+
+        <!-- Displaying Saved Addresses with Radio Buttons -->
+        <div class="mt-4">
+            <div id="addressList">
+                {% for address in addresses %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="addressRadio" id="address{{ address.id }}" value="{{ address.id }}">
+                        <label class="form-check-label" for="address{{ address.id }}">
+                            {{ address.street_address }}, {{ address.city }}, {{ address.state }}, {{ address.zip_code }}, {{ address.country }}
+                        </label>
+                    </div>
+                {% empty %}
+                    <p>No addresses saved yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addressModal" tabindex="-1" role="dialog" aria-labelledby="addressModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addressModalTitle">Add Address</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Address Form -->
+                    <form id="addressForm" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="street_address">Street Address:</label>
+                            <input type="text" class="form-control" id="street_address" name="street_address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City:</label>
+                            <input type="text" class="form-control" id="city" name="city" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State:</label>
+                            <input type="text" class="form-control" id="state" name="state" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="zip_code">Zip Code:</label>
+                            <input type="text" class="form-control" id="zip_code" name="zip_code" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country:</label>
+                            <input type="text" class="form-control" id="country" name="country" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveAddressBtn">Save Address</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <a href="/payment" class="checkout-btn">Proceed to Checkout</a>
+
+    <!-- Bootstrap and jQuery Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Disable the checkout button initially
+        var checkoutButton = document.querySelector('.checkout-btn');
+        checkoutButton.disabled = true;
+
+        // Event listener for radio button selection
+        document.querySelectorAll('input[name="addressRadio"]').forEach(function(input) {
+            input.addEventListener('change', function() {
+                // Enable the checkout button when an address is selected
+                if (document.querySelector('input[name="addressRadio"]:checked')) {
+                    checkoutButton.disabled = false;
+                }
+            });
+        });
+
+        // Checkout button event
+        checkoutButton.addEventListener('click', function(e) {
+            var selectedAddress = document.querySelector('input[name="addressRadio"]:checked');
+            
+            // If no address is selected, prevent checkout and prompt user to add an address
+            if (!selectedAddress) {
+                e.preventDefault(); // Prevent form submission
+                alert("Please select an address before proceeding to checkout.");
+            }
+        });
+
+        document.getElementById("saveAddressBtn").addEventListener("click", function() {
+            var form = document.getElementById("addressForm");
+            var formData = new FormData(form);
+
+            // Send the form data to the server using AJAX
+            fetch('/add-address/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);  // Show success message
+                $('#addressModal').modal('hide');  // Close modal
+
+                // Add the new address to the address list dynamically
+                var addressList = document.getElementById('addressList');
+                var newAddressHTML = `
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="addressRadio" value="${data.address_id}" id="address${data.address_id}">
+                        <label class="form-check-label" for="address${data.address_id}">
+                            ${data.street_address}, ${data.city}, ${data.state}, ${data.zip_code}, ${data.country}
+                        </label>
+                    </div>
+                `;
+                addressList.innerHTML += newAddressHTML;  // Append the new address
+                // Enable the checkout button if an address is added
+                checkoutButton.disabled = false;
+            })
+            .catch(error => console.log('Error:', error));
+        });
+    </script>
+
+    <!-- Checkout Button -->
+
+</body>
+</html> {% endcomment %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            padding: 30px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-card h2 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .mt-4 {
+            margin-top: 40px;
+        }
+
+        .form-check {
+            margin-bottom: 20px;
+        }
+
+        .form-check-input {
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .form-check-input:checked {
+            transform: scale(1.2);
+            border-color: #007bff;
+        }
+
+        .form-check-label {
+            font-size: 16px;
+            color: #555;
+            transition: color 0.2s ease;
+        }
+
+        .form-check-label:hover {
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .modal-header .close {
+            color: white;
+            font-size: 1.5rem;
+            opacity: 1;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            padding: 15px;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 15px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .checkout-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            font-size: 18px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .checkout-btn:hover {
+            background-color: #218838;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .profile-card h2 {
+                font-size: 24px;
+            }
+
+            .form-control {
+                font-size: 14px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .checkout-btn {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="profile-card">
+            <h2>User Profile</h2>
+            <!-- Button to trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addressModal">
+                Add Address
+            </button>
+        </div>
+
+        <!-- Displaying Saved Addresses with Radio Buttons -->
+        <div class="mt-4">
+            <div id="addressList">
+                {% for address in addresses %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="addressRadio" id="address{{ address.id }}" value="{{ address.id }}">
+                        <label class="form-check-label" for="address{{ address.id }}">
+                            {{ address.street_address }}, {{ address.city }}, {{ address.state }}, {{ address.zip_code }}, {{ address.country }}
+                        </label>
+                    </div>
+                {% empty %}
+                    <p>No addresses saved yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Checkout Button moved below the address section -->
+        <a href="/payment" class="checkout-btn">Proceed to Checkout</a>
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addressModal" tabindex="-1" role="dialog" aria-labelledby="addressModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addressModalTitle">Add Address</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Address Form -->
+                    <form id="addressForm" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="street_address">Street Address:</label>
+                            <input type="text" class="form-control" id="street_address" name="street_address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City:</label>
+                            <input type="text" class="form-control" id="city" name="city" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State:</label>
+                            <input type="text" class="form-control" id="state" name="state" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="zip_code">Zip Code:</label>
+                            <input type="text" class="form-control" id="zip_code" name="zip_code" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country:</label>
+                            <input type="text" class="form-control" id="country" name="country" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveAddressBtn">Save Address</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap and jQuery Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Disable the checkout button initially
+        var checkoutButton = document.querySelector('.checkout-btn');
+        checkoutButton.disabled = true;
+
+        // Event listener for radio button selection
+        document.querySelectorAll('input[name="addressRadio"]').forEach(function(input) {
+            input.addEventListener('change', function() {
+                // Enable the checkout button when an address is selected
+                if (document.querySelector('input[name="addressRadio"]:checked')) {
+                    checkoutButton.disabled = false;
+                }
+            });
+        });
+
+        // Checkout button event
+        checkoutButton.addEventListener('click', function(e) {
+            var selectedAddress = document.querySelector('input[name="addressRadio"]:checked');
+            
+            // If no address is selected, prevent checkout and prompt user to add an address
+            if (!selectedAddress) {
+                e.preventDefault(); // Prevent form submission
+                alert("Please select an address before proceeding to checkout.");
+            }
+        });
+
+        document.getElementById("saveAddressBtn").addEventListener("click", function() {
+            var form = document.getElementById("addressForm");
+            var formData = new FormData(form);
+
+            // Send the form data to the server using AJAX
+            fetch('/add-address/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);  // Show success message
+                $('#addressModal').modal('hide');  // Close modal
+
+                // Add the new address to the address list dynamically
+                var addressList = document.getElementById('addressList');
+                var newAddressHTML = `
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="addressRadio" value="${data.address_id}" id="address${data.address_id}">
+                        <label class="form-check-label" for="address${data.address_id}">
+                            ${data.street_address}, ${data.city}, ${data.state}, ${data.zip_code}, ${data.country}
+                        </label>
+                    </div>
+                `;
+                addressList.innerHTML += newAddressHTML;  // Append the new address
+                // Enable the checkout button if an address is added
+                checkoutButton.disabled = false;
+            })
+            .catch(error => console.log('Error:', error));
+        });
+    </script>
+
+</body>
+</html>

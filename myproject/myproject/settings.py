@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'anita',  # Replace with your database name
+        'NAME': 'simmi',  # Replace with your database name
         'USER': 'root',  # Replace with your MySQL username
         'PASSWORD': 'root',  # Replace with your MySQL password
         'HOST': 'localhost',
@@ -137,3 +137,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CSRF_COOKIE_NAME = "csrftoken"  # Default cookie name
+
+LOGOUT_REDIRECT_URL = '/'  # Change 'login' to the URL name of your login page if different
+
+
